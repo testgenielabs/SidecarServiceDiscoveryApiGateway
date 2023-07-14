@@ -1,0 +1,53 @@
+service: http-service-discovery
+org: kloia
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-1
+  environment:
+   DYNAMODB_TABLE: PrometheusServiceDiscovery
+  
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:DeleteItem"
+            - "dynamodb:Scan"
+            - "dynamodb:Query"
+          Resource: "*" # arn:aws:dynamodb:eu-west-1:123456789012:table/PrometheusServiceDiscovery"
+
+functions:
+  app:
+    handler: app.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+
+resources:
+  Resources:
+    PrometheusServiceDiscovery:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PrometheusServiceDiscovery
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S            
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  tableName: PrometheusServiceDiscovery
+  dynamodb:
+    start:
+      migrate: true
