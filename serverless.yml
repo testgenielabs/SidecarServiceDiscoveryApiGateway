@@ -19,7 +19,7 @@ provider:
             - "dynamodb:DeleteItem"
             - "dynamodb:Scan"
             - "dynamodb:Query"
-          Resource: "*" # arn:aws:dynamodb:eu-west-1:123456789012:table/PrometheusServiceDiscovery"
+          Resource: "*"
 
 functions:
   app:
