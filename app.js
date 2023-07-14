@@ -34,10 +34,9 @@ app.get("/targets", async function (req, res) {
   }
 });
 
-
 const schema = Joi.object({
-    targets: Joi.array().items(Joi.string()).required(),
-    labels: Joi.object().required(),
+  targets: Joi.array().items(Joi.string()).required(),
+  labels: Joi.object().required(),
 });
 
 app.post("/targets", async function (req, res) {
@@ -78,27 +77,25 @@ app.post("/targets", async function (req, res) {
 });
 
 app.delete("/targets/:id", async function (req, res) {
-    try {
-        console.log("hey")
-        // get the id from the request path
-        const id = req.params.id;
+  try {
+    // get the id from the request path
+    const id = req.params.id;
 
-        // create the params object for the dynamoDb call
-        const params = {
-            TableName: tableName,
-            Key: {
-                id: id,
-            },
-        };
+    // create the params object for the dynamoDb call
+    const params = {
+      TableName: tableName,
+      Key: {
+        id: id,
+      },
+    };
 
-        await dynamoDb.delete(params).promise();
+    await dynamoDb.delete(params).promise();
 
-        return res.status(200).json({});
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error.message });
-    }
+    return res.status(200).json({});
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
 });
-
 
 module.exports.handler = serverless(app);
